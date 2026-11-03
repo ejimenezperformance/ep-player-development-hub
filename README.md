@@ -5,7 +5,7 @@
 > From Statcast data to a diagnosis and a 12-week offseason plan — for any MLB hitter or pitcher, in seconds.
 > *Del dato de Statcast al diagnóstico y a un plan de offseason de 12 semanas, para cualquier bateador o pitcher de MLB, en segundos.*
 
-**Live app:** _add Streamlit Cloud link here_
+**Live app:** [ep-player-development.streamlit.app](https://ep-player-development.streamlit.app)
 
 ---
 
