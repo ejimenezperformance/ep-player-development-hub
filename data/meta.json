@@ -1,0 +1,242 @@
+{
+  "years": [
+    2024,
+    2025,
+    2026
+  ],
+  "min_pa": 100,
+  "built": "2026-11-02",
+  "hit_metrics": {
+    "avg_swing_speed": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "mph"
+    },
+    "avg_best_speed": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "mph"
+    },
+    "exit_velocity_avg": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "mph"
+    },
+    "hard_hit_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "barrel_batted_rate": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "sweet_spot_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "oz_swing_percent": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "whiff_percent": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "k_percent": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "bb_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "sprint_speed": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "ft/s"
+    },
+    "xwoba": {
+      "dir": 1,
+      "dec": 3,
+      "unit": ""
+    }
+  },
+  "pit_metrics": {
+    "fastball_avg_speed": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "mph"
+    },
+    "fastball_avg_spin": {
+      "dir": 1,
+      "dec": 0,
+      "unit": "rpm"
+    },
+    "ff_avg_break_z_induced": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "in"
+    },
+    "whiff_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "oz_swing_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "k_percent": {
+      "dir": 1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "bb_percent": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "hard_hit_percent": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "barrel_batted_rate": {
+      "dir": -1,
+      "dec": 1,
+      "unit": "%"
+    },
+    "xwoba": {
+      "dir": -1,
+      "dec": 3,
+      "unit": ""
+    },
+    "arm_angle": {
+      "dir": 0,
+      "dec": 1,
+      "unit": "\u00b0"
+    }
+  },
+  "hit_thresholds": {
+    "avg_swing_speed": {
+      "sd": 1.0461886639993463,
+      "mean": 0.13453038674033166,
+      "n": 362
+    },
+    "avg_best_speed": {
+      "sd": 1.3954023331070178,
+      "mean": 0.4871252442348062,
+      "n": 362
+    },
+    "exit_velocity_avg": {
+      "sd": 1.5759733550199533,
+      "mean": 0.44419889502762433,
+      "n": 362
+    },
+    "hard_hit_percent": {
+      "sd": 5.386596848968826,
+      "mean": 1.6980662983425416,
+      "n": 362
+    },
+    "barrel_batted_rate": {
+      "sd": 3.1249736443081377,
+      "mean": 0.6403314917127072,
+      "n": 362
+    },
+    "sweet_spot_percent": {
+      "sd": 4.315537948613485,
+      "mean": 0.36160220994475145,
+      "n": 362
+    },
+    "oz_swing_percent": {
+      "sd": 3.639416762570738,
+      "mean": -0.19558011049723747,
+      "n": 362
+    },
+    "whiff_percent": {
+      "sd": 3.715517061318682,
+      "mean": 0.04005524861878439,
+      "n": 362
+    },
+    "k_percent": {
+      "sd": 4.598586228567619,
+      "mean": -0.31436464088397803,
+      "n": 362
+    },
+    "bb_percent": {
+      "sd": 2.5449764555076877,
+      "mean": 0.14751381215469614,
+      "n": 362
+    },
+    "sprint_speed": {
+      "sd": 0.4755229891618361,
+      "mean": -0.12679558011049724,
+      "n": 362
+    },
+    "xwoba": {
+      "sd": 0.032623317811046375,
+      "mean": -0.0023812154696132588,
+      "n": 362
+    }
+  },
+  "pit_thresholds": {
+    "fastball_avg_speed": {
+      "sd": 0.9583731520660349,
+      "mean": 0.01820809248554925,
+      "n": 346
+    },
+    "fastball_avg_spin": {
+      "sd": 57.20293631972833,
+      "mean": 20.572254335260116,
+      "n": 346
+    },
+    "ff_avg_break_z_induced": {
+      "sd": 1.1992003610446997,
+      "mean": 0.13567073170731703,
+      "n": 328
+    },
+    "whiff_percent": {
+      "sd": 3.8161178527657578,
+      "mean": -0.5052023121387285,
+      "n": 346
+    },
+    "oz_swing_percent": {
+      "sd": 3.3288856269728915,
+      "mean": -0.21069364161849716,
+      "n": 346
+    },
+    "k_percent": {
+      "sd": 4.353537048043111,
+      "mean": -1.0390173410404626,
+      "n": 346
+    },
+    "bb_percent": {
+      "sd": 2.472026965044783,
+      "mean": 0.23699421965317924,
+      "n": 346
+    },
+    "hard_hit_percent": {
+      "sd": 5.112385807892359,
+      "mean": 2.097976878612717,
+      "n": 346
+    },
+    "barrel_batted_rate": {
+      "sd": 3.005789281535364,
+      "mean": 0.8734104046242775,
+      "n": 346
+    },
+    "xwoba": {
+      "sd": 0.03410889050025789,
+      "mean": 0.004315028901734104,
+      "n": 346
+    }
+  }
+}
