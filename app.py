@@ -46,6 +46,16 @@ T = {
         priority="Priority", no_plan="No clear gap: no metric below the 35th percentile and no alerts. Plan = maintain strengths and monitor.",
         credit="Built by Emerson Jimenez · Emerson Performance · Data: Baseball Savant (MLB Statcast)",
         role={"SP": "starter", "RP": "reliever"}, roles={"SP": "starters", "RP": "relievers"}, built="Data build", pa="PA", bf="BF", age="Age",
+        tab_next="Next start (v2)", next_head="What to expect from his next start",
+        next_proj="Projected CSW, next start", next_range="80% range", next_league="League",
+        next_bt="2026 backtest: projection made before each start vs. what happened",
+        next_actual="Actual CSW", next_pred="Projected (before the start)", next_band="80% range",
+        next_report="Report", next_none="Next-start projection is available for starters with 4+ starts in 2026.",
+        next_valid="League-wide validation (pre-registered, 2026 holdout)",
+        next_model="Model", next_base="Best simple baseline", next_mae="Error (MAE, pp of CSW)",
+        next_cov="80% range coverage in 2026", next_label="Result",
+        next_note="Trained on 2025 only; every 2026 projection uses only information available before that start. "
+                  "Starts after a 14+ day absence are excluded. Report text is generated from the computed numbers; it adds none.",
     ),
     "es": dict(
         title="Player Development Hub",
@@ -70,6 +80,16 @@ T = {
         priority="Prioridad", no_plan="Sin brecha clara: ninguna métrica bajo el percentil 35 y sin alertas. Plan = mantener fortalezas y monitorear.",
         credit="Creado por Emerson Jimenez · Emerson Performance · Datos: Baseball Savant (MLB Statcast)",
         role={"SP": "abridor", "RP": "relevista"}, roles={"SP": "abridores", "RP": "relevistas"}, built="Datos actualizados", pa="PA", bf="BE", age="Edad",
+        tab_next="Próxima salida (v2)", next_head="Qué esperar de su próxima salida",
+        next_proj="CSW proyectado, próxima salida", next_range="Rango 80%", next_league="Liga",
+        next_bt="Backtest 2026: proyección hecha antes de cada salida vs. lo que pasó",
+        next_actual="CSW real", next_pred="Proyectado (antes de la salida)", next_band="Rango 80%",
+        next_report="Reporte", next_none="La proyección de próxima salida está disponible para abridores con 4+ salidas en 2026.",
+        next_valid="Validación en toda la liga (pre-registrada, 2026 como prueba)",
+        next_model="Modelo", next_base="Mejor línea base simple", next_mae="Error (MAE, pp de CSW)",
+        next_cov="Cobertura del rango 80% en 2026", next_label="Resultado",
+        next_note="Entrenado solo con 2025; cada proyección de 2026 usa solo información disponible antes de esa salida. "
+                  "Se excluyen las salidas después de una ausencia de 14+ días. El texto del reporte se genera a partir de los números calculados; no agrega ninguno.",
     ),
 }
 
@@ -114,6 +134,21 @@ def load():
 
 
 H, P, META = load()
+
+
+@st.cache_data
+def load_next():
+    try:
+        res = json.loads((DATA / "next_start_results.json").read_text(encoding="utf-8"))
+        proj = pd.read_csv(DATA / "next_start_projection.csv")
+        bt = pd.read_csv(DATA / "next_start_backtest.csv", parse_dates=["game_date"])
+        rep = json.loads((DATA / "next_start_reports.json").read_text(encoding="utf-8"))
+        return res, proj, bt, rep
+    except FileNotFoundError:
+        return None, None, None, None
+
+
+NRES, NPROJ, NBT, NREP = load_next()
 
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
@@ -192,7 +227,10 @@ st.markdown(f"""<div class='ep-head'><span style='font-size:1.5rem;font-weight:7
 &nbsp;&nbsp;<span class='ep-muted'>{row['team']} · {pos} · {t['age']} {int(row['player_age'])} · {vol} · {year}</span></div>""",
             unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4 = st.tabs([t["tab_profile"], t["tab_trend"], t["tab_plan"], t["tab_method"]])
+show_next = (not is_hit) and NRES is not None
+tabs = st.tabs([t["tab_profile"], t["tab_trend"], t["tab_plan"]] + ([t["tab_next"]] if show_next else []) + [t["tab_method"]])
+tab1, tab2, tab3, tab4 = tabs[0], tabs[1], tabs[2], tabs[-1]
+tab_next = tabs[3] if show_next else None
 
 
 def pct_color(p):
@@ -315,6 +353,63 @@ with tab3:
 <b>{t['phases']}:</b><ul style='margin:4px 0'>{phases}</ul>
 <b>{t['monitor']}:</b> {mod['monitor'][lang]}<br>
 <span class='ep-muted'>{t['ref']}: {mod['ref']}</span></div>""", unsafe_allow_html=True)
+
+
+# ---------------------------------------------------------------- tab next: next start (v2)
+if tab_next is not None:
+    with tab_next:
+        st.subheader(t["next_head"])
+        pr = NPROJ[NPROJ.pitcher == pid]
+        if not len(pr):
+            st.info(t["next_none"])
+        else:
+            pr = pr.iloc[0]
+            lo, hi = NRES["interval_80"]
+            c1, c2, c3 = st.columns(3)
+            c1.metric(t["next_proj"], f"{100 * pr.proj_csw:.1f}%",
+                      f"{100 * (pr.proj_csw - pr.league_csw_std):+.1f} pp vs {t['next_league'].lower()}")
+            c2.metric(t["next_range"], f"{100 * (pr.proj_csw + lo):.1f}% – {100 * (pr.proj_csw + hi):.1f}%")
+            c3.metric(t["next_league"], f"{100 * pr.league_csw_std:.1f}%")
+            rep = NREP.get(str(pid))
+            if rep:
+                st.markdown(f"<div class='ep-card'><b>{t['next_report']}</b><br>{rep[lang]}</div>", unsafe_allow_html=True)
+
+            g = NBT[NBT.pitcher == pid].sort_values("game_date")
+            if len(g):
+                st.markdown(f"**{t['next_bt']}**")
+                out = (g.csw_rate < g.pred_lo) | (g.csw_rate > g.pred_hi)
+                fig3 = go.Figure()
+                fig3.add_trace(go.Scatter(x=list(g.game_date) + list(g.game_date[::-1]),
+                                          y=list(100 * g.pred_hi) + list(100 * g.pred_lo[::-1]),
+                                          fill="toself", fillcolor="rgba(11,27,51,0.10)", line=dict(width=0),
+                                          name=t["next_band"], hoverinfo="skip"))
+                fig3.add_trace(go.Scatter(x=g.game_date, y=100 * g.pred, name=t["next_pred"], mode="lines",
+                                          line=dict(color=NAVY, width=2)))
+                fig3.add_trace(go.Scatter(x=g.game_date, y=100 * g.csw_rate, name=t["next_actual"], mode="markers",
+                                          marker=dict(size=[12 if o else 8 for o in out],
+                                                      color=[LOW if o else GOLD for o in out],
+                                                      symbol=["diamond" if o else "circle" for o in out],
+                                                      line=dict(color=NAVY, width=1.5)),
+                                          customdata=g.opponent, hovertemplate="%{x|%b %d} vs %{customdata}: %{y:.1f}%<extra></extra>"))
+                fig3.update_layout(height=340, margin=dict(l=10, r=10, t=30, b=30), plot_bgcolor="white",
+                                   paper_bgcolor="rgba(0,0,0,0)", yaxis=dict(title="CSW %", gridcolor="#EEE", color=MUTED),
+                                   xaxis=dict(color=MUTED), legend=dict(orientation="h", y=1.14),
+                                   font=dict(family="Poppins, sans-serif"))
+                st.plotly_chart(fig3, width="stretch", config={"displayModeBar": False})
+
+        st.markdown(f"**{t['next_valid']}**")
+        MNAME = {'en': {'league_average': 'League average', 'last_start': 'Last start only', 'season_to_date': 'Season-to-date', 'shrunk_season_to_date': 'Shrunk season-to-date (used in app)'}, 'es': {'league_average': 'Promedio de la liga', 'last_start': 'Solo la última salida', 'season_to_date': 'Temporada hasta la fecha', 'shrunk_season_to_date': 'Temporada ajustada (usada en la app)'}}
+        rows_v = [{t["metric"]: MNAME[lang][k], t["next_mae"]: round(100 * v, 2)}
+                  for k, v in NRES["mae_test_baselines"].items()]
+        rows_v.append({t["metric"]: f"{t['next_model']} ({NRES['model']}, 17 var.)", t["next_mae"]: round(100 * NRES["mae_test_model"], 2)})
+        vt = pd.DataFrame(rows_v).sort_values(t["next_mae"])
+        st.dataframe(vt, hide_index=True, width="stretch")
+        ci = NRES["mae_diff_ci95"]
+        st.markdown(f"<div class='ep-card'><b>{t['next_label']}: {NRES['label']}</b> · "
+                    f"Δ MAE {100 * NRES['mae_diff_vs_best_baseline']:+.2f} pp (95% CI {100 * ci[0]:+.2f} to {100 * ci[1]:+.2f}) · "
+                    f"{t['next_cov']}: {100 * NRES['interval_80_coverage_test']:.0f}% · n = {NRES['n_test']}</div>",
+                    unsafe_allow_html=True)
+        st.markdown(f"<div class='ep-muted'>{t['next_note']}</div>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------- tab 4: method
 with tab4:
